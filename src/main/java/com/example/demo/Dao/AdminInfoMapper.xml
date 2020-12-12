@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.Dao.AdminInfoMapper" >
+
+ <select id="loadAdminInfoByName" resultType ="com.example.demo.Enity.AdminInfo">
+ select * from admin_info where aname=#{aname}
+ </select>
+ <select id="getAdminInfoRolesById" resultType ="com.example.demo.Enity.Role">
+ select * from role r,admin_role ar where r.rid=ar.rid and ar.aid=#{aid}
+ </select>
+ 
+ 
+</mapper>

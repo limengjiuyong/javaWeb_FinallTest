@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="UTF-8">
+<title>员工信息表</title>
+<!-- 引入jquery -->
+<script type="text/javascript" src="../jquery/jquery-3.5.1.js"></script>
+<!-- 引入bootstrap -->
+<link href="../bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet" type="text/css"> 
+<script src="../bootstrap-3.3.7-dist/js/bootstrap.js"></script>
+</head>
+<body>
+<div class="contanier">
+<!-- 第一行col-md-offset-1 -->
+<div class="row">
+  <div class="col-md-12 col-md-offset-1">
+   <h1>员工信息管理</h1>
+    <div class="col-md-4 col-md-offset-9">
+    <div class="col-md-2">
+    <h4 sec:authentication="name"></h4>
+    </div>
+    <div class="col-md-2">
+    <form action="/logout"  method="get">
+   <input value="退出" class="btn btn-default"  type="submit" >
+ </form>
+    </div>
+    </div>
+    
+  </div>
+  
+</div>
+<!-- 第二行 -->
+<div class="row ">
+  <div class="col-md-4 col-md-offset-7">
+  <button type="button" class="btn btn-primary " id="newCreat" >新增</button>
+  <button type="button" class="btn btn-danger " id="delete">删除</button>
+  </div>
+  </div>
+</div>
+<!-- 第三行 ,显示数据-->
+<div class="row col-md-12 ">
+  <div class="col-md-10 col-md-offset-1">
+  
+  <table class="table table-hover">
+  <thead>
+  <tr>
+  <th>#</th>
+  <th>empName</th>
+  <th>empAge</th>
+  <th>department</th>
+  <th>操作</th>
+  </tr>
+  </thead>
+  <tbody id="stus_tbody">
+  
+  </tbody>
+  
+  </table>
+  </div>
+</div>
+<!-- 第四行 分页信息-->
+<div class="row">
+<div class="col-md-4 col-md-offset-1" id="log_Info">
+<!-- 此处交给jquery函数插入 -->
+</div>
+<div class="col-md-4 col-md-offset-7" id="stu_info">
+
+</div>
+
+</div>
+</div>
+</div>
+
+
+<!-- 模态框——添加员工 -->
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">注册信息</h4>
+      </div>
+      <div class="modal-body">
+      <!-- 表单 -->
+      <form>
+  <div class="form-group">
+    <label for="exampleInputEmail1">empName</label>
+    <input type="text" name="ename" class="form-control" id="ename" placeholder="empName">
+  </div>
+  <div class="form-group ">
+    <label for="exampleInputPassword1">empAge</label>
+    <input type="text" name="eage" class="form-control" id="eage" placeholder="empAge">
+  </div>
+  <div class="form-group" >
+  <label  for="exampleInputPassword1">empDpt</label> 
+  <select class="form-control" name="did" id="did"> 
+  <!--  <option value ="11">测试部</option>
+  <option value ="14">人事部</option>
+  <option value="15">财务部</option>
+  <option value="16">开发部</option>
+  <option value="17">运营部</option> -->
+  </select> 
+  </div>  
+</form>  
+  </div>
+  
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+        <button type="button" class="btn btn-primary" id="save">保存</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- 模态框——修改员工信息 -->
+
+<div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">信息修改</h4>
+      </div>
+      <div class="modal-body">
+      <!-- 表单 -->
+      <form>
+     <div class="form-group">
+    <label for="exampleInputEmail1">empId</label>
+    <input type="text" name="eid" class="form-control" id="eid" readonly="readonly" >
+  </div>
+  <div class="form-group">
+    <label for="exampleInputEmail1">empName</label>
+    <input type="text" name="ename" class="form-control" id="ename" placeholder="empName">
+  </div>
+  <div class="form-group ">
+    <label for="exampleInputPassword1">empAge</label>
+    <input type="text" name="eage" class="form-control" id="eage" placeholder="empAge">
+  </div>
+  <div class="form-group" >
+  <label  for="exampleInputPassword1">empDpt</label> 
+  <select class="form-control" name="did1" id="did1"> 
+  
+  </select> 
+  </div>  
+</form>  
+  </div>
+  
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+        <button type="button" class="btn btn-primary" id="update">修改</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+
+//全局变量总记录数
+var totalLog;
+
+$(function(){
+	
+	$.ajax({
+		url:"/admin/empsWithMsg",
+		data:"pages=1",
+		type:"GET",
+		success:function(result)
+		{
+			 build_stuInfo_table(result);
+			paste_logInfo(result);
+			paste_navigatepageNums(result);
+		}
+		
+	});
+});
+
+function toPage(page) {	
+	$.ajax({
+		url:"/admin/empsWithMsg",
+		data:"pages="+page,
+		type:"GET",
+		success:function(result)
+		{
+			build_stuInfo_table(result);
+			paste_logInfo(result);
+			paste_navigatepageNums(result);
+		}
+		
+	});
+}
+//员工信息粘贴
+function build_stuInfo_table(result) {
+	//插入前先清空
+	$("#stus_tbody").empty()
+	var empInfos=result.extend.empInfo.list;
+	$.each(empInfos,function(index,items){
+		var eid=$("<td></td>").append(items.eid);
+		var ename=$("<td></td>").append(items.ename);
+		var eage=$("<td></td>").append(items.eage);
+		var dpname=$("<td></td>").append(items.departmentInfo.dpname);
+		var btnEdit=$("<button></button>").addClass("btn btn-primary btn-sm")
+		.append("<span></span>")
+		.addClass("glyphicon glyphicon-pencil")
+		.append(" 编辑");
+		
+		//设置当前页变量，更新员工信息后能定位到当前页码
+		var currentPage;
+		if(result.extend.empInfo.hasNextPage==false){
+			currentPage=result.extend.empInfo.prePage+1;
+		}
+		if(result.extend.empInfo.hasNextPage==true){
+			currentPage=result.extend.empInfo.nextPage-1;
+		}
+		//点击编辑
+		btnEdit.click(function() {
+			//加载部门信息
+			dpt_info();
+			
+			//弹出模态框
+			$("#myModal1").modal({
+				backdrop:"static"
+			
+			});
+			//粘贴员工Id
+			 $("#eid").val(items.eid);
+			
+			//修改员工信息
+			$("#update").click(function () {
+				
+				$.ajax({
+					url:"/admin/updateEmp",
+					type:"POST",
+					data:$("#myModal1 form").serialize(),
+					success:function(result) {
+						alert(result.msg);
+						$("#myModal1").modal("hide");
+						toPage(currentPage);
+					}
+				});
+				
+			});
+		});
+		var btndelete=$("<button></button>").addClass("btn btn-danger btn-sm")
+		.append("<span></span>")
+		.addClass("glyphicon glyphicon-trash")
+		.append(" 删除");
+		var btn=$("<td></td>").append(btnEdit).append(" ").append(btndelete);
+		$("<tr></tr>")
+		.append(eid)
+		.append(ename)
+		.append(eage)
+		.append(dpname)
+		.append(btn)
+		.appendTo("#stus_tbody");
+		
+		//点击删除
+		var eids=items.eid;
+		btndelete.click(function() {
+			
+			$.ajax({
+				url:"/admin/deleteEmp",
+				type:"GET",
+				data:"eid="+eids,
+				success:function(result)
+				{
+					alert(result.msg);
+					toPage(currentPage);
+				}
+				
+			});
+		});
+			});		
+}
+
+//记录信息粘贴
+function paste_logInfo(result) {
+	
+	//插入前先清空
+	$("#log_Info").empty();
+	var empInfo=result.extend.empInfo;
+	//当前页
+	var pageNum=$("<td></td>").append(empInfo.pageNum);
+	//总页数
+	var pages=$("<td></td>").append(empInfo.pages);
+	//总记录数
+	var total=$("<td></td>").append(empInfo.total);
+	
+	$("<tr></tr>").append("总页数： ")
+	.append(pages)
+	.append("当前页： ")
+	.append(pageNum)
+	.append("总记录数： ")
+	.append(total)
+	.appendTo("#log_Info");
+	
+	totalLog=empInfo.pages;
+}
+//粘贴连续分页信息
+function paste_navigatepageNums(result) {
+	
+	//插入前先清空
+	$("#stu_info").empty();
+	var navigatepages=result.extend.empInfo.navigatepageNums;
+	//当前页
+	var pageNum=result.extend.empInfo.pageNum;
+	
+	
+	var firstPage=$("<li></li>").append($("<a></a>").append("首页"));
+	
+	firstPage.click(function () {
+		toPage(1);
+	});
+	var perviousPage=$("<li></li>").append($("<a></a>").append("&laquo;"));
+	
+	perviousPage.click(function() {
+			if(result.extend.empInfo.hasPreviousPage==true){
+			
+			toPage(result.extend.empInfo.prePage);
+			}
+		});
+		
+	var nextPage=$("<li></li>").append($("<a></a>").append("&raquo;"));
+	
+	nextPage.click(function() {
+	if(result.extend.empInfo.hasNextPage==true)
+	{
+		
+		toPage(result.extend.empInfo.nextPage);
+	}
+	});
+	var lastPage=$("<li></li>").append($("<a></a>").append("末页"));
+	
+	lastPage.click(function () {
+		toPage(result.extend.empInfo.pages);
+	});
+	
+	var ul=$("<ul></ul>").addClass("pagination");
+	var nav=$("<nav></nav>");
+	//判断是否有前一页
+	if(result.extend.empInfo.hasPreviousPage==false)
+		{
+		firstPage.addClass("disabled");
+		perviousPage.addClass("disabled ");
+		}
+	ul.append(firstPage).append(perviousPage);
+	//遍历插入并添加点击事件
+	$.each(navigatepages,function(index,items){
+		var numli= $("<li></li>").append($("<a></a>").append(items));
+		if(pageNum==items){
+		
+			numli.addClass("active");
+		}
+		numli.click(function() {
+			toPage(items);
+		});
+		ul.append(numli);
+		});
+	
+	//判断是否有后一页
+	if(result.extend.empInfo.hasNextPage==false)
+	{
+	nextPage.addClass("disabled");
+	lastPage.addClass("disabled");
+	}
+	ul.append(nextPage).append(lastPage);
+	nav.append(ul).appendTo("#stu_info");
+}
+
+
+//部门下拉菜单点击响应
+function dpt_info() {
+	
+	$("#did").empty();
+	$("#did1").empty();
+	$.ajax({
+		url:"/admin/dptInfo",
+		type:"GET",
+		success:function(result)
+		{
+			var dptinfos=result.extend.dptInfo;
+			//获取值并粘贴
+			$.each(dptinfos,function(index,items)
+					{
+				
+				var dptname= $("<option></option>").append(items.dpname).attr("value",items.dpid);
+				dptname.appendTo("#did");
+				dptname.appendTo("#did1");
+					});
+		}
+		
+	});
+	
+}
+
+$("#newCreat").click(function() {
+	dpt_info();
+	$("#myModal").modal({
+		backdrop:"static"
+	});
+});
+
+//添加新员工
+//新增事件点击，bingshixian末页跳转
+$("#save").click(function () {
+	
+	$.ajax({
+		url:"/admin/insertEmp",
+		type:"POST",
+		data:$("#myModal form").serialize(),
+		success:function(result) {
+			alert(result.msg);
+			$("#myModal").modal("hide");
+			toPage(totalLog );
+		}
+	});
+	
+});
+
+</script>
+</body>
+</html>

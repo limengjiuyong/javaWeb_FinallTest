@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>登录验证</title>
+<script type="text/javascript" src="../jquery/jquery-3.5.1.js"></script>
+<link href="../bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet" type="text/css"> 
+<script src="../bootstrap-3.3.7-dist/js/bootstrap.js"></script>
+</head>
+<body> 
+<nav class="navbar navbar-default">
+<div class="row">
+  <div class="col-xs-12 col-md-8 col-md-offset-1">
+   <div class="col-md-1">
+  </div>
+   <h1 >欢迎登录本系统</h1>
+  </div>
+  <div class="col-xs-6 col-md-4"> 
+  
+  </div>
+</div>
+</nav>
+<div class="row">
+  <div class="col-md-2 col-md-offset-5 ">
+<form action="/login" method="post" class="form-horizontal">
+  <div class="form-group ">
+    <label >UserName</label>
+    <input type="text" class="form-control input-lg" id="aname" name="aname" placeholder="UserName">
+  </div>
+  <div class="form-group ">
+    <label >Password</label>
+    <input type="password" class="form-control input-lg" id="apassword" name="apassword" placeholder="Password">
+  </div >
+  <div class="form-group">
+   <input value="登录" class="btn btn-primary input-lg col-lg-12"  type="submit" >
+   </div>
+</form>
+
+</div>
+</div>
+
+</body>
+</html>
