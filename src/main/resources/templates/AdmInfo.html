@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="UTF-8">
+<title>管理员信息</title>
+<!-- 引入jquery -->
+<script type="text/javascript" src="../jquery/jquery-3.5.1.js"></script>
+<link href="../bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet" type="text/css"> 
+<script src="../bootstrap-3.3.7-dist/js/bootstrap.js"></script>
+</head>
+<body>
+
+<!-- 第一行col-md-offset-1 -->
+<div class="row">
+  <div class="col-md-12 col-md-offset-1">
+   <h1>管理员信息</h1>
+    <div class="col-md-4 col-md-offset-9">
+    <div class="col-md-2">
+    </div>
+    <div class="col-md-2">
+    <form action="/logout"  method="get" id="log">
+   <input value="退出" class="btn btn-default"  type="submit" >
+ </form>
+    </div>
+    <div class="col-md-2">
+    <form action="/admin/empinfo"  method="get">
+   <input value="首页" class="btn btn-default"  type="submit" >
+ </form>
+    </div>
+    </div>
+    
+  </div>
+ </div> 
+
+<table class="table table-bordered">
+  <tr>
+  <td >工号</td>
+  <td sec:authentication="principal.aid" id="aid1"></td>
+ </tr>
+ <tr>
+ <td >姓名</td>
+ <td sec:authentication="principal.aname"></td>
+ </tr>
+ <tr>
+ <td >权限</td>
+ <td sec:authentication="principal.roles[0].rnameZh"></td>
+ </tr>
+ <tr>
+ <td >账号状态</td>
+ <td sec:authentication="principal.enable"></td>
+ </tr>
+ <tr>
+  <td >是否封禁</td>
+  <td sec:authentication="principal.locked"></td>
+ </tr>
+ <tr>
+  <td >  </td>
+  <td><button id="btn">修改密码</button></td>
+ </tr>
+  </table>
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">修改密码</h4>
+      </div>
+      <div class="modal-body">
+      <!-- 表单 -->
+      <form>
+      <div style="display:none;" class="form-group" >
+    <input type="text" name="aid" class="form-control" id="aid" >
+  </div>
+  <div class="form-group ">
+    <label for="exampleInputPassword1">新密码</label>
+    <input type="text" name="apassword" class="form-control" id="apassword" placeholder="apassword">
+  </div>
+</form>  
+  </div>
+  
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+        <button type="button" class="btn btn-primary" id="save">修改</button>
+      </div>
+    </div>
+  </div>
+</div>
+ <!-- 
+ {"msg":{"aid":3,"aname":"??","apassword":"123456","enable":true,"locked":false,"rid":null,"roles":[{"id":3,"rname":"ROLE_admin","rnameZh":"???"}],"enabled":true,"password":"123456","username":"??","accountNonExpired":true,"accountNonLocked":true,"credentialsNonExpired":true,"authorities":[{"authority":"ROLE_admin"}]}}
+  -->
+ </table>
+<script type="text/javascript">
+
+ var aid1;
+$("#btn").click(function(){
+	var aid=$("#aid1").text();
+	aid1=aid;
+	$("#myModal").modal({
+		backdrop:"static"
+	});
+	$("#aid").val(aid);
+	alert(aid1)
+	})
+	
+$("#save").click(function(){
+	$.ajax({
+		url:"/admin/update",
+		type:"POST",
+		data:$("#myModal form").serialize(),
+		success:function(result) {
+			
+			$("#myModal").modal("hide");
+			alert("请重新登录");
+			 window.location.href="/logout";
+		}
+	});
+})	
+
+
+</script>
+</body>
+</html>

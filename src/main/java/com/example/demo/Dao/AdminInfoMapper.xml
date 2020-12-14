@@ -9,5 +9,25 @@
  select * from role r,admin_role ar where r.rid=ar.rid and ar.aid=#{aid}
  </select>
  
+ <insert id="insertAdminSelective" parameterType="com.example.demo.Enity.AdminInfo">
+    insert into admin_info (aid, aname, apassword,enable,locked)
+    values (#{aid,jdbcType=INTEGER}, #{aname,jdbcType=VARCHAR},#{apassword,jdbcType=VARCHAR}, #{enable,jdbcType=TINYINT},#{locked,jdbcType=TINYINT})
+  </insert>
  
+ <insert id="insertRoleSelective" parameterType="com.example.demo.Enity.AdminRole">
+    insert into admin_role(aid, rid)
+    values(#{aid,jdbcType=INTEGER},#{rid,jdbcType=INTEGER})
+     
+  </insert>
+  
+ 
+  <update id="updateByExample" parameterType="com.example.demo.Enity.AdminInfo">
+    update admin_info
+    <set>
+      <if test="apassword != null">
+        apassword = #{apassword,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where aid = #{aid,jdbcType=INTEGER}
+  </update>
 </mapper>

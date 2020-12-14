@@ -15,13 +15,18 @@
 <div class="row">
   <div class="col-md-12 col-md-offset-1">
    <h1>员工信息管理</h1>
-    <div class="col-md-4 col-md-offset-9">
+    <div class="col-md-4 col-md-offset-8">
     <div class="col-md-2">
     <h4 sec:authentication="name"></h4>
     </div>
     <div class="col-md-2">
     <form action="/logout"  method="get">
    <input value="退出" class="btn btn-default"  type="submit" >
+ </form>
+    </div>
+    <div class="col-md-2">
+    <form action="/admin/adminfo"  method="get">
+   <input value="个人信息" class="btn btn-default"  type="submit" >
  </form>
     </div>
     </div>
@@ -95,11 +100,7 @@
   <div class="form-group" >
   <label  for="exampleInputPassword1">empDpt</label> 
   <select class="form-control" name="did" id="did"> 
-  <!--  <option value ="11">测试部</option>
-  <option value ="14">人事部</option>
-  <option value="15">财务部</option>
-  <option value="16">开发部</option>
-  <option value="17">运营部</option> -->
+  
   </select> 
   </div>  
 </form>  
@@ -180,6 +181,7 @@ function toPage(page) {
 		type:"GET",
 		success:function(result)
 		{
+			
 			build_stuInfo_table(result);
 			paste_logInfo(result);
 			paste_navigatepageNums(result);
@@ -231,7 +233,7 @@ function build_stuInfo_table(result) {
 					type:"POST",
 					data:$("#myModal1 form").serialize(),
 					success:function(result) {
-						alert(result.msg);
+						
 						$("#myModal1").modal("hide");
 						toPage(currentPage);
 					}
@@ -291,8 +293,8 @@ function paste_logInfo(result) {
 	.append("总记录数： ")
 	.append(total)
 	.appendTo("#log_Info");
-	
 	totalLog=empInfo.pages;
+	
 }
 //粘贴连续分页信息
 function paste_navigatepageNums(result) {
@@ -381,21 +383,24 @@ function dpt_info() {
 			$.each(dptinfos,function(index,items)
 					{
 				
-				var dptname= $("<option></option>").append(items.dpname).attr("value",items.dpid);
-				dptname.appendTo("#did");
-				dptname.appendTo("#did1");
-					});
+				
+				var dptname1= $("<option></option>").append(items.dpname).attr("value",items.dpid);
+				var dptname2= $("<option></option>").append(items.dpname).attr("value",items.dpid);		
+				dptname1.appendTo("#did1");
+				dptname2.appendTo("#did");
+				})
 		}
-		
 	});
-	
+			
 }
 
 $("#newCreat").click(function() {
+	
 	dpt_info();
 	$("#myModal").modal({
 		backdrop:"static"
 	});
+	
 });
 
 //添加新员工
@@ -407,9 +412,9 @@ $("#save").click(function () {
 		type:"POST",
 		data:$("#myModal form").serialize(),
 		success:function(result) {
-			alert(result.msg);
+			
 			$("#myModal").modal("hide");
-			toPage(totalLog );
+			toPage(totalLog);
 		}
 	});
 	

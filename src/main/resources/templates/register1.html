@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>管理员注册</title>
+<script type="text/javascript" src="../jquery/jquery-3.5.1.js"></script>
+<link href="../bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet" type="text/css"> 
+<script src="../bootstrap-3.3.7-dist/js/bootstrap.js"></script>
+</head>
+<body>
+<nav class="navbar navbar-default">
+<div class="row">
+  <div class="col-xs-12 col-md-8 col-md-offset-1">
+  <div class="col-md-1">
+  </div>
+   <h1 >管理员注册</h1>
+   </div>
+    
+  <div class="col-xs-6 col-md-4"> 
+
+  </div>
+</div>
+</nav>
+
+<div class="row">
+  <div class="col-md-3 col-md-offset-4 ">
+<form id="adminInfo" class="form-horizontal">
+  <div class="form-group ">
+    <label >admId</label>
+    <input type="text" class="form-control " id="aid" name="aid" placeholder="admId">
+  </div>
+  <div class="form-group ">
+    <label >admName</label>
+    <input type="text" class="form-control " id="aname" name="aname" placeholder="admName">
+  </div>
+  <div class="form-group ">
+    <label >admPassword</label>
+    <input type="password" class="form-control " id="apassword" name="apassword" placeholder="Password">
+  </div >
+  
+  <div class="form-group" >
+  <label  for="exampleInputPassword1">admRole</label> 
+  <select class="form-control" name="rid" id="rid">  
+  </select> 
+  </div> 
+  <div class="modal-footer">
+        <button type="button" class="btn btn-primary input-lg col-lg-12" id="save">注册</button>
+   </div> 
+</form>
+
+</div>
+</div>
+<script type="text/javascript">
+$(function(){
+	$("#rid").empty();
+	$.ajax({
+		url:"/base/findRole",
+		type:"GET",
+		success:function(result)
+		{
+			var roleinfos=result.extend.Roles;
+			//获取值并粘贴
+			$.each(roleinfos,function(index,items){
+				
+				var rolename= $("<option></option>").append(items.rnamezh).attr("value",items.rid);		
+				rolename.appendTo("#rid");
+				
+				});
+			
+		}
+		
+	});
+});
+
+$("#save").click(function () {
+	
+	$.ajax({
+		url:"/base/insertAdm",
+		type:"POST",
+		data:$("#adminInfo").serialize(),
+		success:function(result) {
+			alert(result.msg);
+		}
+	});
+	
+}); 
+</script>
+</body>
+</html>

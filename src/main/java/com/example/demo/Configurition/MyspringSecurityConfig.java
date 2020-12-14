@@ -2,6 +2,7 @@ package com.example.demo.Configurition;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,6 +24,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
 import com.example.demo.Service.AdminInfoService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Configuration
 public class MyspringSecurityConfig extends WebSecurityConfigurerAdapter{
@@ -50,7 +52,7 @@ public class MyspringSecurityConfig extends WebSecurityConfigurerAdapter{
 		http.authorizeRequests()
 		.antMatchers("/admin/**").hasRole("admin")
 		.antMatchers("db/**").hasRole("dba")
-		.antMatchers("/login")
+		.antMatchers("/base/**")
 		.permitAll()
 		.and()
 		.formLogin()
@@ -65,9 +67,23 @@ public class MyspringSecurityConfig extends WebSecurityConfigurerAdapter{
 					Authentication authentication) throws IOException{
 				
 				//处理成功后重定向
-				String path = request.getContextPath();
-				String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
-				response.sendRedirect(basePath+"admin/empinfo");
+						
+						
+						  String path = request.getContextPath(); String basePath =
+						  request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()
+						  +path+"/"; response.sendRedirect(basePath+"admin/empinfo");
+						
+						 
+				
+						
+						/*
+						 * Object principal=authentication.getPrincipal();
+						 * response.setContentType("application/json;charset-utf-8"); PrintWriter
+						 * out=response.getWriter(); Map<String, Object> map=new HashMap<>();
+						 * map.put("msg", principal); ObjectMapper omMapper=new ObjectMapper();
+						 * out.write(omMapper.writeValueAsString(map)); out.flush(); out.close();
+						 * 
+						 */
 			}	
 	})
 		.permitAll()
@@ -82,7 +98,7 @@ public class MyspringSecurityConfig extends WebSecurityConfigurerAdapter{
 			public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
 					throws IOException, ServletException {
 				//退出后重定向到登录页面
-				response.sendRedirect("/login");
+				response.sendRedirect("/base/login");
 				
 			}
 		})

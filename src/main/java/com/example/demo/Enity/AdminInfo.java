@@ -15,6 +15,13 @@ public class AdminInfo implements UserDetails{
 	private String apassword;
 	private Boolean enable;
 	private Boolean locked;
+	private Integer rid;
+	public Integer getRid() {
+		return rid;
+	}
+	public void setRid(Integer rid) {
+		this.rid = rid;
+	}
 	private List<Role> roles;
 	
 	public Integer getAid() {
@@ -50,8 +57,8 @@ public class AdminInfo implements UserDetails{
 	public List<Role> getRoles() {
 		return roles;
 	}
-	public void setRoles(List<Role> roles) {
-		this.roles = roles;
+	public void setRoles(List<Role> list) {
+		this.roles = list;
 	}
 	
 	@Override

@@ -56,7 +56,7 @@
       <property name="enableSubPackages" value="true" />
     </javaClientGenerator>
 <!-- 指定对应数据库的每个表的生成策略 -->
-  <table tableName="dapartment_info" domainObjectName="DptInfo"></table>
+  <table tableName="role" domainObjectName="RoleInfos"></table>
  <!--  <table tableName="role" domainObjectName="roleInfo"></table>--> 
   
   <!-- <table schema="DB2ADMIN" tableName="ALLTYPES" domainObjectName="Customer" >
